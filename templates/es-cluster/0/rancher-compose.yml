@@ -4,6 +4,12 @@
     description: Scalable Elasticsearch Cluster
 
     questions:
+        - variable: "kopf_port"
+          label: "Public Port"
+          description: "Unique public port for kopf"
+          type: "int"
+          default: 80
+          required: true
         - variable: "cluster_name"
           type: "string"
           required: true
