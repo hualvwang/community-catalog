@@ -4,7 +4,7 @@ services:
         labels: 
             - io.rancher.container.hostname_override=container_name
             - io.rancher.sidekicks=es-storage
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.2
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
         environment: 
             - "cluster.name=${cluster_name}"
             - "node.name=$${HOSTNAME}"
@@ -33,7 +33,7 @@ services:
         labels:
             - io.rancher.container.hostname_override=container_name
             - io.rancher.sidekicks=es-storage
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.2
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
         environment: 
             - "cluster.name=${cluster_name}"
             - "node.name=$${HOSTNAME}"
@@ -63,7 +63,7 @@ services:
         labels:
             - io.rancher.container.hostname_override=container_name
             - io.rancher.sidekicks=es-storage
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.2
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
         environment: 
             - "cluster.name=${cluster_name}"
             - "node.name=$${HOSTNAME}"
@@ -92,12 +92,22 @@ services:
     es-storage:
         labels:
             - io.rancher.container.start_once=true
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.3.2
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
         entrypoint: /bin/true
         volumes: 
             - es-storage-volume:/usr/share/elasticsearch/data
-
+    kopf:
+        image: rancher/kopf:v0.4.0
+        ports:
+            - "${kopf_port}:80"
+        environment:
+            KOPF_SERVER_NAME: 'es.dev'
+            KOPF_ES_SERVERS: 'es-clients:9200'
+        labels:
+            io.rancher.container.hostname_override: container_name
+        links:
+            - es-client:es-clients
 volumes:
-  es-storage-volume:
-    driver: local
-    per_container: true
+    es-storage-volume:
+        driver: local
+        per_container: true
